@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Noms des joueurs</title>
+</head>
+<body>
+  <h2>Entrez les noms des joueurs</h2>
+  <form id="formJoueurs"></form>
+  <button onclick="valider()">Valider</button>
+
+  <script>
+    const nb = localStorage.getItem("nbJoueurs");
+    const form = document.getElementById("formJoueurs");
+
+    for (let i = 0; i < nb; i++) {
+      const input = document.createElement("input");
+      input.type = "text";
+      input.placeholder = `Joueur ${i + 1}`;
+      input.required = true;
+      form.appendChild(input);
+      form.appendChild(document.createElement("br"));
+    }
+
+    function valider() {
+      const inputs = form.querySelectorAll("input");
+      const joueurs = Array.from(inputs).map(i => i.value);
+      localStorage.setItem("joueurs", JSON.stringify(joueurs));
+      localStorage.setItem("scores", JSON.stringify(joueurs.map(j => ({ nom: j, score: 0 }))));
+      localStorage.setItem("tour", "0");
+      window.location.href = "playlist.html";
+    }
+  </script>
+</body>
+</html>
