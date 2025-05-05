@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Tour de jeu</title>
+</head>
+<body>
+  <h2>Tour de : <span id="joueur"></span></h2>
+  <div id="lecteur"></div>
+  <div id="chrono"></div>
+  <button id="valider" style="display:none;" onclick="valider()">Valider</button>
+  <div id="resultat"></div>
+  <button id="suivant" style="display:none;" onclick="suivant()">Joueur suivant</button>
+
+  <script>
+    let joueurs = JSON.parse(localStorage.getItem("joueurs"));
+    let playlist = JSON.parse(localStorage.getItem("playlist"));
+    let scores = JSON.parse(localStorage.getItem("scores"));
+    let tour = parseInt(localStorage.getItem("tour") || "0");
+
+    const joueurActuel = scores[tour % joueurs.length].nom;
+    document.getElementById("joueur").innerText = joueurActuel;
+
+    const url = playlist[Math.floor(Math.random() * playlist.length)];
+    const videoId = url.split("v=")[1]?.split("&")[0];
+    const start = Math.floor(Math.random() * 90) + 30;
+    const stop = start + 10;
+
+    const iframe = document.createElement("iframe");
+    iframe.width = 560;
+    iframe.height = 315;
+    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&start=${start}&end=${stop}&enablejsapi=1`;
+    iframe.frameBorder = 0;
+    iframe.allow = "autoplay";
+    document.getElementById("lecteur").appendChild(iframe);
+
+    setTimeout(() => {
+      lancerChrono(7);
+    }, 10000);
+
+    function lancerChrono(duree) {
+      let t = duree;
+      const chrono = document.getElementById("chrono");
+      const validerBtn = document.getElementById("valider");
+      validerBtn.style.display = "inline-block";
+
+      const interval = setInterval(() => {
+        chrono.innerText = `Chante... ${t} sec restantes`;
+        t--;
+        if (t < 0) {
+          clearInterval(interval);
+          chrono.innerText = "Temps écoulé !";
+        }
+      }, 1000);
+    }
+
+    function valider() {
+      const index = scores.findIndex(j => j.nom === joueurActuel);
+      scores[index].score += 1;
+      localStorage.setItem("scores", JSON.stringify(scores));
+      document.getElementById("resultat").innerText = "Bravo ! Point marqué.";
+      document.getElementById("valider").style.display = "none";
+      document.getElementById("suivant").style.display = "inline-block";
+    }
+
+    function suivant() {
+      let nouveauTour = tour + 1;
+      localStorage.setItem("tour", nouveauTour);
+
+      if (nouveauTour >= joueurs.length * 3) {
+        window.location.href = "fin.html";
+      } else {
+        window.location.reload();
+      }
+    }
+  </script>
+</body>
+</html>
