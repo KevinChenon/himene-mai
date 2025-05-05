@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Playlist</title>
+</head>
+<body>
+  <h2>Ajoute des liens YouTube à la playlist</h2>
+  <input type="text" id="url" placeholder="URL YouTube">
+  <button onclick="ajouter()">Ajouter</button>
+  <ul id="liste"></ul>
+  <button onclick="jouer()">Jouer</button>
+
+  <script>
+    const playlist = [];
+
+    function ajouter() {
+      const url = document.getElementById("url").value;
+      if (url.includes("youtube.com/watch")) {
+        playlist.push(url);
+        const li = document.createElement("li");
+        li.innerText = url;
+        document.getElementById("liste").appendChild(li);
+        document.getElementById("url").value = "";
+      } else {
+        alert("Lien invalide");
+      }
+    }
+
+    function jouer() {
+      if (playlist.length === 0) {
+        alert("Ajoutez au moins une musique.");
+        return;
+      }
+      localStorage.setItem("playlist", JSON.stringify(playlist));
+      window.location.href = "jeu.html";
+    }
+  </script>
+</body>
+</html>
